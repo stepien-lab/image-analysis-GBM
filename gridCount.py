@@ -9,6 +9,11 @@ pd.options.mode.chained_assignment = None  # default='warn'
 fullLocations = pd.read_csv('Counts_Cells.csv', usecols=['ImageNumber', 'ObjectNumber',
                                                    'Location_Center_X', 'Location_Center_Y'])
 
+# import image sizes
+imageSizes = pd.read_csv('Counts_Image.csv', usecols=['Height_ColorCells', 'Width_ColorCells'])
+height = imageSizes.loc[0, 'Height_ColorCells']
+width = imageSizes.loc[0, 'Width_ColorCells']
+
 # limit data frame to one image and create coordinate vectors
 image1 = fullLocations[fullLocations['ImageNumber'] == 1]
 image2 = fullLocations[fullLocations['ImageNumber'] == 2]
@@ -32,8 +37,8 @@ columns = int(input("Enter numer of grid columns: "))
 
 # create grid
 # image size: 3653×3657 pixels
-xnodes = np.linspace(0, 3653, num=columns + 1)
-ynodes = np.linspace(0, 3657, num=rows + 1)
+xnodes = np.linspace(0, width, num=columns + 1)
+ynodes = np.linspace(0, height, num=rows + 1)
 
 # plot grid on scatterplot
 plt.scatter(x, y, s=0.1, color='darkblue')
@@ -60,7 +65,7 @@ if total != locations.shape[0]:
 
 # average density
 area = 3653*3657/columns/rows
-av_density = boxes['ImageNumber'].mean()/(area)
+av_density = boxes['ImageNumber'].mean()/area
 print('Average density for', rows, 'rows and', columns, 'columns:', av_density)
 
 # export to spreadsheet
