@@ -36,7 +36,6 @@ rows = int(input("Enter number of grid rows: "))
 columns = int(input("Enter numer of grid columns: "))
 
 # create grid
-# image size: 3653×3657 pixels
 xnodes = np.linspace(0, width, num=columns + 1)
 ynodes = np.linspace(0, height, num=rows + 1)
 
