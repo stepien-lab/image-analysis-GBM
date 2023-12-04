@@ -14,7 +14,7 @@ image1 = fullLocations[fullLocations['ImageNumber'] == 1]
 image2 = fullLocations[fullLocations['ImageNumber'] == 2]
 image3 = fullLocations[fullLocations['ImageNumber'] == 3]
 image4 = fullLocations[fullLocations['ImageNumber'] == 4]
-locations = image2
+locations = image1
 x = locations.loc[:, 'Location_Center_X']
 y = locations.loc[:, 'Location_Center_Y']
 
