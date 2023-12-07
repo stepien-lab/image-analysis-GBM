@@ -19,7 +19,7 @@ image4 = fullLocations[fullLocations['ImageNumber'] == 4]
 grid = make_grid(width, height)
 
 # analyze images
-analyze(image1, grid, 1)
-analyze(image2, grid, 2)
-analyze(image3, grid, 3)
-analyze(image4, grid, 4)
+analyze(image1, grid, 1, width, height)
+analyze(image2, grid, 2, width, height)
+analyze(image3, grid, 3, width, height)
+analyze(image4, grid, 4, width, height)
