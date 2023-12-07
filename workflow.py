@@ -11,5 +11,5 @@ def analyze(image, grid, number):
     density(grid[2], grid[3], image_data)
 
     # export to spreadsheet
-    file_name = 'GridSort' + str(number) + ':' + str(grid[2]) + 'x'+ str(grid[3]) + '.xlsx'
+    file_name = 'GridSort' + str(number) + '_' + str(grid[2]) + 'x'+ str(grid[3]) + '.xlsx'
     image_data.to_excel(file_name)
