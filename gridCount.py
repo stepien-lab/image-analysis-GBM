@@ -22,7 +22,6 @@ def grid_sort(locations, xnodes, ynodes):
     locations['X_Bin'] = pd.cut(x=locations.loc[:, 'Location_Center_X'], bins=xnodes)
     locations['Y_Bin'] = pd.cut(x=locations.loc[:, 'Location_Center_Y'], bins=ynodes)
     boxes = locations.groupby(['X_Bin', 'Y_Bin']).count()
-    print(boxes['ImageNumber'])
 
     # check accuracy of count total
     total = boxes['ImageNumber'].sum()
@@ -37,4 +36,4 @@ def density(rows, columns, boxes, width, height):
     # average density
     area = width*height/columns/rows
     av_density = boxes['ImageNumber'].mean()/area
-    print('Average density for', rows, 'rows and', columns, 'columns:', av_density)
+    return av_density
