@@ -31,4 +31,4 @@ analyze(image3, grid, density_data, 3, width, height, data_folder)
 analyze(image4, grid, density_data, 4, width, height, data_folder)
 
 # save density data as spreadsheet
-density_data.to_excel(data_folder + 'AverageDensity' + str(grid[2]) + 'x' + str(grid[3]) +'.xlsx')
+density_data.to_excel(data_folder + 'AverageDensity' + str(grid[2]) + 'x' + str(grid[3]) + '.xlsx')
