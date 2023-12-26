@@ -32,7 +32,7 @@ def grid_sort(locations, xnodes, ynodes):
 
 
 # calculate and display density
-def density(rows, columns, boxes, width, height):
+def density(width, height, rows, columns, boxes):
     # average density
     area = width*height/columns/rows
     av_density = boxes['ImageNumber'].mean()/area

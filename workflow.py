@@ -8,7 +8,7 @@ def analyze(image, grid, density_data, number, width, height, data_folder):
     plot_points(image)
     grid_plot(image, grid[0], grid[1])
     image_data = grid_sort(image, grid[0], grid[1])
-    av_density = density(grid[2], grid[3], image_data, width, height)
+    av_density = density(width, height, grid[2], grid[3], image_data)
 
     # export to spreadsheet
     file_name = 'GridSort' + str(number) + '_' + str(grid[2]) + 'x' + str(grid[3]) + '.xlsx'
