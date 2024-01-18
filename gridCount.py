@@ -3,16 +3,23 @@ import numpy as np
 
 
 # create grid to use for all images
-def make_grid(width, height):
-    # get grid size from user input
-    rows = int(input("Enter number of grid rows: "))
-    columns = int(input("Enter numer of grid columns: "))
+def make_grid(image_width, image_height, grid_box_size_px):
+    x_nodes = [0]
+    y_nodes = [0]
 
-    # create grid
-    xnodes = np.linspace(0, width, num=columns + 1)
-    ynodes = np.linspace(0, height, num=rows + 1)
+    # create nodes that are a specified width apart
+    while x_nodes[-1] + grid_box_size_px < image_width:
+        x_nodes = np.append(x_nodes, [x_nodes[-1] + grid_box_size_px])
 
-    return [xnodes, ynodes, rows, columns]
+    # create nodes that are a specified height apart
+    while y_nodes[-1] + grid_box_size_px < image_height:
+        y_nodes = np.append(y_nodes, [y_nodes[-1] + grid_box_size_px])
+
+    # add final nodes at image boundaries
+    x_nodes = np.append(x_nodes, [image_width])
+    y_nodes = np.append(y_nodes, [image_height])
+
+    return [x_nodes, y_nodes]
 
 
 # return dataframe with centroid locations sorted onto grid
@@ -24,15 +31,15 @@ def grid_sort(locations, xnodes, ynodes):
 
     # check accuracy of count total
     total = boxes['Location_Center_X'].sum()
+    print(total, locations.shape[0])
     if total != locations.shape[0]:
         print('Warning: grid sum does not match expected total!')
-
     return boxes
 
 
 # calculate and display density
-def density(width, height, rows, columns, boxes):
+def density(grid_box_size, boxes):
     # average density
-    area = width*height/columns/rows
+    area = grid_box_size^2
     av_density = boxes['Location_Center_X'].mean()/area
     return av_density
