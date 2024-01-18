@@ -31,7 +31,6 @@ def grid_sort(locations, xnodes, ynodes):
 
     # check accuracy of count total
     total = boxes['Location_Center_X'].sum()
-    print(total, locations.shape[0])
     if total != locations.shape[0]:
         print('Warning: grid sum does not match expected total!')
     return boxes
@@ -40,6 +39,6 @@ def grid_sort(locations, xnodes, ynodes):
 # calculate and display density
 def density(grid_box_size, boxes):
     # average density
-    area = grid_box_size^2
-    av_density = boxes['Location_Center_X'].mean()/area
+    area = grid_box_size ^ 2
+    av_density = boxes['Location_Center_X'].mean() / area
     return av_density
