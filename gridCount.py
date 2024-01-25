@@ -27,7 +27,7 @@ def grid_sort(locations, xnodes, ynodes):
     # sort data into bins based on x and y coordinates
     locations['X_Bin'] = pd.cut(x=locations.loc[:, 'Location_Center_X'], bins=xnodes)
     locations['Y_Bin'] = pd.cut(x=locations.loc[:, 'Location_Center_Y'], bins=ynodes)
-    boxes = locations.groupby(['X_Bin', 'Y_Bin']).count()
+    boxes = locations.groupby(['X_Bin', 'Y_Bin'], observed=False).count()
 
     # check accuracy of count total
     total = boxes['Location_Center_X'].sum()
