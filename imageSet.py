@@ -22,7 +22,7 @@ def image_set(data_folder, plot_folder, mouse_section_id):
     width = image_sizes.loc[0, 'Width_DAPI']*0.62
 
     # multiple grid sizes
-    grid_box_size_px = [500, 250]
+    grid_box_size_px = [1000, 500, 250]
 
     for size in grid_box_size_px:
         # create grid for to use for all images
@@ -31,8 +31,8 @@ def image_set(data_folder, plot_folder, mouse_section_id):
         density_data = pd.DataFrame(columns=['Cell Type', 'Grid Box Size (px)', 'Density'])
         # analyze images
         analyze(cancer_data_px, grid, size, density_data, 'Cancer Cell', width, height, data_folder,
-                plot_folder)
-        analyze(mdsc_data_px, grid, size, density_data, 'MDSC', width, height, data_folder, plot_folder)
-        analyze(cd3_data_px, grid, size, density_data, 'CD3', width, height, data_folder, plot_folder)
+                plot_folder, mouse_section_id)
+        analyze(mdsc_data_px, grid, size, density_data, 'MDSC', width, height, data_folder, plot_folder, mouse_section_id)
+        analyze(cd3_data_px, grid, size, density_data, 'CD3', width, height, data_folder, plot_folder, mouse_section_id)
         # save density data as spreadsheet
-        density_data.to_excel(data_folder + 'AverageDensity' + '_' + str(size) + 'px.xlsx')
+        density_data.to_excel(data_folder + 'AverageDensity' + '_' + mouse_section_id + '_' + str(size) + 'px.xlsx')
