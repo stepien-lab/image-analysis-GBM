@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 
 # read coordinates from data frame and plot centroids with origin at top left
-def plot_points(locations, cell_type, plot_folder):
+def plot_points(locations, cell_type, plot_folder, mouse_section_id):
     x = locations.loc[:, 'Location_Center_X']
     y = locations.loc[:, 'Location_Center_Y']
 
@@ -10,14 +10,13 @@ def plot_points(locations, cell_type, plot_folder):
     plt.gca().invert_yaxis()
     plt.xlabel('X Locations')
     plt.ylabel('Y Locations')
-    plt.title(cell_type + ' Centroids')
-    plt.show()
-    plt.savefig(plot_folder + 'Plot' + cell_type + '.png', bbox_inches='tight')
-    plt.close()
+    plt.title('Mouse ' + mouse_section_id + ' ' + cell_type + ' Centroids')
+    plt.savefig(plot_folder + mouse_section_id + '_' + cell_type + '_plot.png', bbox_inches='tight')
+    # plt.show()
 
 
 # read coordinates and plot grid on scatterplot
-def grid_plot(locations, xnodes, ynodes, width, height, cell_type, grid_box_size, plot_folder):
+def grid_plot(locations, xnodes, ynodes, width, height, cell_type, grid_box_size, plot_folder, mouse_section_id):
     x = locations.loc[:, 'Location_Center_X']
     y = locations.loc[:, 'Location_Center_Y']
 
@@ -25,12 +24,11 @@ def grid_plot(locations, xnodes, ynodes, width, height, cell_type, grid_box_size
     plt.gca().invert_yaxis()
     plt.xlabel('X Locations')
     plt.ylabel('Y Locations')
-    plt.title(cell_type + ' Centroids with Grid')
+    plt.title('Mouse ' + mouse_section_id + ' ' + cell_type + ' Centroids with ' + str(grid_box_size) + ' px Grid')
     for i in xnodes:
-        plt.plot([i, i], [0, width], color='red', alpha=0.9)
+        plt.vlines(x=i, ymin=0, ymax=height, color='red', alpha=0.9)
     for j in ynodes:
-        plt.plot([0, height], [j, j], color='red', alpha=0.9)
+        plt.hlines(y=j, xmin=0, xmax=width, color='red', alpha=0.9)
+    plt.savefig(plot_folder + mouse_section_id + '_' + cell_type + '_' + str(grid_box_size) + '_px_plot.png',
+                bbox_inches='tight')
     # plt.show()
-    # plt.savefig(plot_folder + 'Centroid Grid Plot' + '_' + cell_type + '_' + str(grid_box_size) + 'px.png',
-    # bbox_inches='tight')
-    plt.close()

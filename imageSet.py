@@ -30,9 +30,10 @@ def image_set(data_folder, plot_folder, mouse_section_id):
         # create spreadsheet for density data
         density_data = pd.DataFrame(columns=['Cell Type', 'Grid Box Size (px)', 'Density'])
         # analyze images
-        analyze(cancer_data_px, grid, size, density_data, 'Cancer Cell', width, height, data_folder,
+        analyze(cancer_data_px, grid, size, density_data, 'CancerCell', width, height, data_folder,
                 plot_folder, mouse_section_id)
         analyze(mdsc_data_px, grid, size, density_data, 'MDSC', width, height, data_folder, plot_folder, mouse_section_id)
         analyze(cd3_data_px, grid, size, density_data, 'CD3', width, height, data_folder, plot_folder, mouse_section_id)
         # save density data as spreadsheet
         density_data.to_excel(data_folder + 'AverageDensity' + '_' + mouse_section_id + '_' + str(size) + 'px.xlsx')
+        print(mouse_section_id + ' ' + str(size) + ' px sort complete!')
