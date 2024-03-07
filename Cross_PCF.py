@@ -7,52 +7,42 @@ from helperFunctions import *
 sns.set_style('white')
 sns.set(font_scale=5)
 
-# Generate synthetic data - strong clustering on LHS, weak exclusion on RHS
-np.random.seed(1107)
-seeds1 = 0.1 + 0.8*np.random.rand(20,2)*np.array([0.5,1])
-labs = []
-contuslabs = []
-points = np.empty(shape=(0,2))
-sigma = 0.02
-# Cluster process on LHS
-for i in range(len(seeds1)):
-    p = seeds1[i,:] + np.random.randn(20,2)*sigma
-    labs.extend(['$C_1$' for v in range(10)])
-    contuslabs.extend([np.nan for v in range(10)])
-    # contuslabs.extend([0.25 + np.random.rand()*0.25 for v in range(10)])
-    labs.extend(['$C_2$' for v in range(10)])
-    contuslabs.extend([np.random.rand()*0.5 for v in range(10)])
-    points = np.vstack((points,p))
+mouse_section_id = pd.read_csv('mouse_sections.csv', usecols=['Mouse_Sections'])
 
-# Different cluster processes on RHS
-seeds2 = 0.1 + 0.8*np.random.rand(20,2)*np.array([0.5,1]) + [0.4,0]
-for i in range(len(seeds2)):
-    p = seeds2[i,:] + np.random.randn(10,2)*sigma
-    if i < len(seeds2)*0.5:
-        labs.extend(['$C_1$' for v in range(10)])
-        contuslabs.extend([np.nan for v in range(10)])
-        # contuslabs.extend([np.random.rand()*0.25 for v in range(10)])
-    else:
-        labs.extend(['$C_2$' for v in range(10)])
-        contuslabs.extend([0.5 + np.random.rand()*0.5 for v in range(10)])
-    points = np.vstack((points,p))
+# import x and y locations of cancer cells from CellProfiler csv file
+cancer_data = pd.read_csv(mouse_section_id.loc[0, 'Mouse_Sections']+'_Data_CancerCells.csv', usecols=['Location_Center_X', 'Location_Center_Y'])
+cancer_data_px = cancer_data.mul(0.62)
+cancer_array = cancer_data_px.to_numpy()
 
+# import x and y locations of MDSCs from CellProfiler csv file
+mdsc_data = pd.read_csv(mouse_section_id.loc[0, 'Mouse_Sections'] + '_Data_MDSC.csv', usecols=['Location_Center_X', 'Location_Center_Y'])
+mdsc_data_px = mdsc_data.mul(0.62)
+mdsc_array = mdsc_data_px.to_numpy()
 
-points = points*1000
+# import x and y locations of CD3 from CellProfiler csv file
+# cd3_data = pd.read_csv(mouse_section_id.loc[0, 'Mouse_Sections'] + '_Data_CD3.csv', usecols=['Location_Center_X', 'Location_Center_Y'])
+# cd3_data_px = cd3_data.mul(0.62)
+# cd3_array = cd3_data_px.to_numpy()
 
-pc = generatePointCloud('Synthetic Dataset I',points,domain=[[0,1000],[0,1000]])
+cancer_mdsc = arr = np.vstack((cancer_array, mdsc_array))
+
+labs = np.concatenate((['Cancer Cells']*cancer_array.shape[0], ['MDSCs']*mdsc_array.shape[0]))
+
+pc = generatePointCloud(mouse_section_id, cancer_mdsc)
 pc.addLabels('Celltype','categorical',labs,cmap='tab10')
-pc.addLabels('$m$','continuous',contuslabs,cmap='RdBu_r')
+#pc.addLabels('$m$','continuous',contuslabs,cmap='RdBu_r')
 
 visualisePointCloud(pc,'Celltype',markerSize=100)#,showBoundary=True)
-visualisePointCloud(pc,'$m$',markerSize=100,cmap='Oranges')#,showBoundary=True)
-c1mask = np.asarray(labs) == '$C_1$'
-plt.scatter(points[c1mask,0],points[c1mask,1],s=100,zorder=-1)
+#visualisePointCloud(pc,'$m$',markerSize=100,cmap='Oranges')#,showBoundary=True)
+c1mask = np.asarray(labs) == 'Cancer Cells'
+plt.scatter(cancer_mdsc[c1mask,0],cancer_mdsc[c1mask,1],s=100,zorder=-1)
+plt.gca().invert_yaxis()
+plt.show()
 
-#%% Calculate cross-PCFs - Synthetic Dataset I (Fig 2)
-a = '$C_1$'
-b = '$C_2$'
-maxR=500
+#%% Calculate cross-PCFs
+a = 'Cancer Cells'
+b = 'MDSCs'
+maxR=1000
 annulusStep = 1
 annulusWidth = 10
 r, pcf, contributions = pairCorrelationFunction(pc, 'Celltype', [a,b], maxR=maxR,annulusStep=annulusStep,annulusWidth=annulusWidth)
@@ -60,36 +50,39 @@ r2, pcf2, contributions2 = pairCorrelationFunction(pc, 'Celltype', [b,a], maxR=m
 
 plt.figure(figsize=(18,18))
 plt.gca().axhline(1,c='k',linestyle=':',lw=3)
-plt.plot(r,pcf,lw=7,label='$g_{C_1 C_2}(r)$',linestyle='-')
-plt.plot(r2,pcf2,lw=7,label='$g_{C_2 C_1}(r)$',linestyle=(0,(1,1.5)))
+plt.plot(r,pcf,lw=7,label='$g_{Cancer MDSCs}(r)$',linestyle='-')
+plt.plot(r2,pcf2,lw=7,label='$g_{MDSCs Cancer}(r)$',linestyle=(0,(1,1.5)))
 plt.xlabel(r'Radius, $r$ ($\mu$m)')
 plt.ylim([0,7])
 plt.legend()
 plt.show() # I added this to see plots
 
-#%% Calculate TCMs - Synthetic Dataset I (Fig 2)
-tcm = topographicalCorrelationMap(pc,'Celltype','$C_1$','Celltype','$C_2$',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
+#%% Calculate TCMs
+tcm = topographicalCorrelationMap(pc,'Celltype','Cancer Cells','Celltype','MDSCs',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
 
 plt.figure(figsize=(20,20))
 l = int(np.ceil(np.max(np.abs([tcm.min(),tcm.max()]))))
 plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l,origin='lower')
-plt.colorbar(label=r'$\Gamma_{C_1 C_2}(r=50)$')
+plt.colorbar(label=r'$\Gamma_{Cancer MDSCs}(r=50)$')
 ax = plt.gca()
 ax.grid(False)
+plt.gca().invert_yaxis()
+plt.show() # I added this to see plots
 
-tcm = topographicalCorrelationMap(pc,'Celltype','$C_2$','Celltype','$C_1$',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
+tcm = topographicalCorrelationMap(pc,'Celltype','MDSCs','Celltype','Cancer Cells',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
 
 plt.figure(figsize=(20,20))
 l = int(np.ceil(np.max(np.abs([tcm.min(),tcm.max()]))))
 plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l,origin='lower')
-plt.colorbar(label=r'$\Gamma_{C_2 C_1}(r=50)$')
+plt.colorbar(label=r'$\Gamma_{MDCSs Cancer}(r=50)$')
 ax = plt.gca()
 ax.grid(False)
+plt.gca().invert_yaxis()
 plt.show() # I added this to see plots
 
 
-#%% Calculate wPCFs - Synthetic Dataset I (Fig 4)
-
+#%% Calculate wPCFs
+"""
 def weightingFunction(p,l_B):
     weights = 1-np.abs(p-l_B)/0.2
     weights = np.maximum(weights, np.zeros(np.shape(weights)))
@@ -111,3 +104,4 @@ plt.ylabel('wPCF($r$, $C_1$, $m$)')
 plt.gca().axhline(1,c='k',linestyle=':',lw=3)
 plt.ylim([0,10.5])
 plt.show() # I added this to see plots
+"""
