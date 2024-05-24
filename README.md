@@ -5,7 +5,13 @@
 The code contained in the image-analysis-GBM project was developed for image analysis of fluorescent images of brain tissue in a glioma-bearing mouse (such as Figure 3 in [this paper](https://doi.org/10.1007/s00285-023-02027-y)).
 
 ## Programs
-The code in this repository is developed to be used with [CellProfiler](https://cellprofiler.org).
+### CellProfiler
+[CellProcessing.cpproj] is developed for image analysis with [CellProfiler](https://cellprofiler.org).
+
+### Python
+The remaining code is developed in Python for analyzing output from CellProfiler.
+
+It is based on code available from [https://github.com/JABull1066/ExtendedCorrelationFunctions](https://github.com/JABull1066/ExtendedCorrelationFunctions).
 
 ## Lead Developer
 The lead developer of this code is [Gillian Carr](https://github.com/gilliancarr).
