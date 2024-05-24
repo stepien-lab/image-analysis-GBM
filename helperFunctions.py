@@ -1,3 +1,9 @@
+#Code from the paper "Extended correlation functions for spatial analysis of
+# multiplex imaging data" by Bull et al (2024),
+# https://doi.org/10.1017/S2633903X24000011.
+
+#GitHub: https://github.com/JABull1066/ExtendedCorrelationFunctions
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
