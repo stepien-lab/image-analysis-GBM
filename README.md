@@ -6,7 +6,7 @@ The code contained in the image-analysis-GBM project was developed for image ana
 
 ## Programs
 ### CellProfiler
-[CellProcessing.cpproj] is developed for image analysis with [CellProfiler](https://cellprofiler.org).
+[CellProcessing.cpproj](CellProcessing.cpproj) is developed for image analysis with [CellProfiler](https://cellprofiler.org).
 
 ### Python
 The remaining code is developed in Python for analyzing output from CellProfiler.
