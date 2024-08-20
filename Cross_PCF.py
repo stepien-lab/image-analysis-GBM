@@ -59,11 +59,11 @@ labs = labs_cancer_mdsc
 
 #%% plot cell types
 pc = generatePointCloud(mouse_section_id, cancer_mdsc)
-pc.addLabels('Celltype','categorical',labs,cmap='tab10')
+pc.addLabels('Cell type', 'categorical', labs, cmap='tab10')
 
-visualisePointCloud(pc,'Celltype',markerSize=100)#,showBoundary=True)
+visualisePointCloud(pc,'Cell type', markerSize=10)
 c1mask = np.asarray(labs) == 'Cancer Cells'
-plt.scatter(cancer_mdsc[c1mask,0],cancer_mdsc[c1mask,1],s=100,zorder=-1)
+plt.scatter(cancer_mdsc[c1mask, 0], cancer_mdsc[c1mask, 1], s=10, zorder=-1)
 plt.gca().invert_yaxis()
 plt.show()
 
@@ -73,39 +73,38 @@ b = 'MDSCs'
 maxR=1000
 annulusStep = 1
 annulusWidth = 10
-r, pcf, contributions = pairCorrelationFunction(pc, 'Celltype', [a,b], maxR=maxR,annulusStep=annulusStep,annulusWidth=annulusWidth)
-r2, pcf2, contributions2 = pairCorrelationFunction(pc, 'Celltype', [b,a], maxR=maxR,annulusStep=annulusStep,annulusWidth=annulusWidth)
+r, pcf, contributions = pairCorrelationFunction(pc, 'Cell type', [a,b], maxR=maxR, annulusStep=annulusStep, annulusWidth=annulusWidth)
+r2, pcf2, contributions2 = pairCorrelationFunction(pc, 'Cell type', [b,a], maxR=maxR, annulusStep=annulusStep, annulusWidth=annulusWidth)
 
 plt.figure(figsize=(18,18))
-plt.gca().axhline(1,c='k',linestyle=':',lw=3)
-plt.plot(r,pcf,lw=7,label='$g_{Cancer MDSCs}(r)$',linestyle='-')
-plt.plot(r2,pcf2,lw=7,label='$g_{MDSCs Cancer}(r)$',linestyle=(0,(1,1.5)))
+plt.gca().axhline(1,c='k', linestyle=':', lw=3)
+plt.plot(r,pcf,lw=7,label='$g_{Cancer MDSC}(r)$',linestyle='-')
+plt.plot(r2,pcf2,lw=7,label='$g_{MDSC Cancer}(r)$',linestyle=(0,(1,1.5)))
 plt.xlabel(r'Radius, $r$ ($\mu$m)')
-plt.ylim([0,7])
 plt.legend()
-plt.show() # added this to see plots
+plt.show()
 
-print('r' + r + 'pcf' + pcf + 'contributions' + contributions)
+# print('r' + r + 'pcf' + pcf + 'contributions' + contributions)
 
 #%% calculate TCMs
-tcm = topographicalCorrelationMap(pc,'Celltype','Cancer Cells','Celltype','MDSCs',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
+tcm = topographicalCorrelationMap(pc,'Cell type','Cancer Cells','Cell type','MDSCs', radiusOfInterest=50, maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50, visualiseStages=False)
 
 plt.figure(figsize=(20,20))
 l = int(np.ceil(np.max(np.abs([tcm.min(),tcm.max()]))))
 plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l,origin='lower')
-plt.colorbar(label=r'$\Gamma_{Cancer MDSCs}(r=50)$')
+plt.colorbar(label=r'$\Gamma_{Cancer MDSC}(r=50)$')
 ax = plt.gca()
 ax.grid(False)
 plt.gca().invert_yaxis()
-plt.show() # added this to see plots
+plt.show()
 
 tcm = topographicalCorrelationMap(pc,'Celltype','MDSCs','Celltype','Cancer Cells',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
 
 plt.figure(figsize=(20,20))
 l = int(np.ceil(np.max(np.abs([tcm.min(),tcm.max()]))))
 plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l,origin='lower')
-plt.colorbar(label=r'$\Gamma_{MDCSs Cancer}(r=50)$')
+plt.colorbar(label=r'$\Gamma_{MDCS Cancer}(r=50)$')
 ax = plt.gca()
 ax.grid(False)
 plt.gca().invert_yaxis()
-plt.show() # added this to see plots
+plt.show()
