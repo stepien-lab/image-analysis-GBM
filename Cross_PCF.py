@@ -65,12 +65,13 @@ visualisePointCloud(pc,'Cell type', markerSize=10)
 c1mask = np.asarray(labs) == 'Cancer Cells'
 plt.scatter(cancer_mdsc[c1mask, 0], cancer_mdsc[c1mask, 1], s=10, zorder=-1)
 plt.gca().invert_yaxis()
+plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/scatter_plot.png', bbox_inches='tight')
 plt.show()
 
 #%% calculate cross-PCFs
 a = 'Cancer Cells'
 b = 'MDSCs'
-maxR=1000
+maxR=2000
 annulusStep = 1
 annulusWidth = 10
 r, pcf, contributions = pairCorrelationFunction(pc, 'Cell type', [a,b], maxR=maxR, annulusStep=annulusStep, annulusWidth=annulusWidth)
@@ -82,9 +83,16 @@ plt.plot(r,pcf,lw=7,label='$g_{Cancer MDSC}(r)$',linestyle='-')
 plt.plot(r2,pcf2,lw=7,label='$g_{MDSC Cancer}(r)$',linestyle=(0,(1,1.5)))
 plt.xlabel(r'Radius, $r$ ($\mu$m)')
 plt.legend()
+plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/cross_pcf_plot.png', bbox_inches='tight')
 plt.show()
 
-# print('r' + r + 'pcf' + pcf + 'contributions' + contributions)
+cross_pcf_data = pd.DataFrame(columns=['r', str(a) + str(b), 'r2', str(b) + str(a)])
+cross_pcf_data['r'] = r
+cross_pcf_data[str(a) + str(b)] = pcf
+cross_pcf_data['r2'] = r2
+cross_pcf_data[str(b) + str(a)] = pcf2
+print(cross_pcf_data)
+cross_pcf_data.to_csv('/Users/gillian/Desktop/UF/Thesis/Spreadsheets/cross_pcf.csv')
 
 #%% calculate TCMs
 tcm = topographicalCorrelationMap(pc,'Cell type','Cancer Cells','Cell type','MDSCs', radiusOfInterest=50, maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50, visualiseStages=False)
@@ -96,6 +104,7 @@ plt.colorbar(label=r'$\Gamma_{Cancer MDSC}(r=50)$')
 ax = plt.gca()
 ax.grid(False)
 plt.gca().invert_yaxis()
+plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/tcm1_plot.png', bbox_inches='tight')
 plt.show()
 
 tcm = topographicalCorrelationMap(pc,'Celltype','MDSCs','Celltype','Cancer Cells',radiusOfInterest=50,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
@@ -107,4 +116,5 @@ plt.colorbar(label=r'$\Gamma_{MDCS Cancer}(r=50)$')
 ax = plt.gca()
 ax.grid(False)
 plt.gca().invert_yaxis()
+plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/tcm2_plot.png', bbox_inches='tight')
 plt.show()
