@@ -66,8 +66,10 @@ labs_mdsc_mdsc = np.concatenate((['MDSCs'] * mdsc_array.shape[0], ['MDSCs'] * md
 # choose one comparison to run
 array = cancer_mdsc
 labs = labs_cancer_mdsc
-gamma1 = r'$g_{CM}$'
-gamma2 = r'$g_{MC}$'
+gamma1_r = r'$g_{CM}(r)$'
+gamma2_r = r'$g_{MC}(r)$'
+gamma1_50 = r'$g_{CM}(r=50)$'
+gamma2_50 = r'$g_{MC}(r=50)$'
 
 
 # %% plot cell types
@@ -99,9 +101,9 @@ r2, pcf2, contributions2 = pairCorrelationFunction(pc, 'Cell type', [b, a], maxR
 
 plt.figure(figsize=(20, 20))
 plt.gca().axhline(1, c='k', linestyle=':', lw=3)
-plt.plot(r, pcf, lw=7, label=gamma1 + r'(r)', linestyle='-')
-plt.plot(r2, pcf2, lw=7, label=gamma2 + r'(r)', linestyle=(0, (1, 1.5)))
-plt.title(section_name + a + '/' + b + 'PCF Plot')
+plt.plot(r, pcf, lw=7, label=gamma1_r, linestyle='-')
+plt.plot(r2, pcf2, lw=7, label=gamma2_r, linestyle=(0, (1, 1.5)))
+plt.title(section_name + ' PCF Plot')
 plt.xlabel(r'radius $r$ ($\mu$m)')
 plt.legend()
 plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/Cross_PCF_Plot_' +
@@ -123,11 +125,11 @@ cross_pcf_data.to_csv('/Users/gillian/Desktop/UF/Thesis/Spreadsheets/PCF/Cross_P
 tcm = topographicalCorrelationMap(pc, 'Cell type', a, 'Cell type', b, radiusOfInterest=50,
                                   maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50, visualiseStages=False)
 
-plt.figure(figsize=(20, 20))
+plt.figure(figsize=(25, 20))
 limit = int(np.ceil(np.max(np.abs([tcm.min(), tcm.max()]))))
 plt.imshow(tcm, cmap='RdBu_r', vmin=-limit, vmax=limit, origin='lower')
-plt.colorbar(label=gamma1 + r'(r=50)')
-plt.title(section_name + ' Topographical Correlation Map A')
+plt.colorbar(label=gamma1_50)
+plt.title(section_name + ' TCM-A')
 plt.xlabel(r'$\mu$m')
 plt.ylabel(r'$\mu$m')
 plt.gca().invert_yaxis()
@@ -138,11 +140,11 @@ plt.show()
 tcm = topographicalCorrelationMap(pc, 'Cell type', b, 'Cell type', a, radiusOfInterest=50,
                                   maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50, visualiseStages=False)
 
-plt.figure(figsize=(20, 20))
+plt.figure(figsize=(25, 20))
 limit = int(np.ceil(np.max(np.abs([tcm.min(), tcm.max()]))))
 plt.imshow(tcm, cmap='RdBu_r', vmin=-limit, vmax=limit, origin='lower')
-plt.colorbar(label=gamma2 + r'(r=50)')
-plt.title(section_name + ' Topographical Correlation Map B')
+plt.colorbar(label=gamma2_50)
+plt.title(section_name + ' TCM-B')
 plt.xlabel(r'$\mu$m')
 plt.ylabel(r'$\mu$m')
 plt.gca().invert_yaxis()
