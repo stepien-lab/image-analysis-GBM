@@ -64,12 +64,12 @@ labs_t_cell_t_cell = np.concatenate((['T-cells'] * t_cell_array.shape[0], ['T-ce
 labs_mdsc_mdsc = np.concatenate((['MDSCs'] * mdsc_array.shape[0], ['MDSCs'] * mdsc_array.shape[0]))
 
 # choose one comparison to run
-array = cancer_mdsc
-labs = labs_cancer_mdsc
-gamma1_r = r'$g_{CM}(r)$'
-gamma2_r = r'$g_{MC}(r)$'
-gamma1_50 = r'$g_{CM}(r=50)$'
-gamma2_50 = r'$g_{MC}(r=50)$'
+array = cancer_cancer
+labs = labs_cancer_cancer
+gamma1_r = r'$g_{C}(r)$'
+gamma2_r = r'$g_{C}(r)$'
+gamma1_50 = r'$g_{C}(r=50)$'
+gamma2_50 = r'$g_{C}(r=50)$'
 
 
 # %% plot cell types
@@ -91,35 +91,42 @@ plt.show()
 # %% calculate cross-PCFs
 a = labs[0]
 b = labs[labs.shape[0] - 1]
-maxR = 1000
+maxR = 250
 annulusStep = 1
 annulusWidth = 10
 r, pcf, contributions = pairCorrelationFunction(pc, 'Cell type', [a, b], maxR=maxR, annulusStep=annulusStep,
                                                 annulusWidth=annulusWidth)
-r2, pcf2, contributions2 = pairCorrelationFunction(pc, 'Cell type', [b, a], maxR=maxR, annulusStep=annulusStep,
-                                                   annulusWidth=annulusWidth)
+if a != b:
+    r2, pcf2, contributions2 = pairCorrelationFunction(pc, 'Cell type', [b, a], maxR=maxR,
+                                                       annulusStep=annulusStep, annulusWidth=annulusWidth)
 
 plt.figure(figsize=(20, 20))
 plt.gca().axhline(1, c='k', linestyle=':', lw=3)
 plt.plot(r, pcf, lw=7, label=gamma1_r, linestyle='-')
-plt.plot(r2, pcf2, lw=7, label=gamma2_r, linestyle=(0, (1, 1.5)))
+if a != b:
+    plt.plot(r2, pcf2, lw=7, label=gamma2_r, linestyle=(0, (1, 1.5)))
 plt.title(section_name + ' PCF Plot')
 plt.xlabel(r'radius $r$ ($\mu$m)')
 plt.legend()
 plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/Cross_PCF_Plot_' +
-            mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + labs[0] + '_' + labs[labs.shape[0] - 1]
-            + '.png', bbox_inches='tight')
+            mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + a + '_' + b + '.png', bbox_inches='tight')
 plt.show()
 
 # save cross pcf data
-cross_pcf_data = pd.DataFrame(columns=['r', str(a) + str(b), 'r2', str(b) + str(a)])
-cross_pcf_data['r'] = r
-cross_pcf_data[str(a) + str(b)] = pcf
-cross_pcf_data['r2'] = r2
-cross_pcf_data[str(b) + str(a)] = pcf2
+
+if a != b:
+    cross_pcf_data = pd.DataFrame(columns=['r', a + b, 'r2', b + a])
+    cross_pcf_data['r'] = r
+    cross_pcf_data[a + b] = pcf
+    cross_pcf_data['r2'] = r2
+    cross_pcf_data[b + a] = pcf2
+else:
+    cross_pcf_data = pd.DataFrame(columns=['r', a + b])
+    cross_pcf_data['r'] = r
+    cross_pcf_data[a + b] = pcf
+
 cross_pcf_data.to_csv('/Users/gillian/Desktop/UF/Thesis/Spreadsheets/PCF/Cross_PCF_'
-                      + mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + labs[0] + '_' + labs[labs.shape[0] - 1]
-                      + '.csv')
+                      + mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + a + '_' + b + '.csv')
 
 # %% calculate TCMs
 tcm = topographicalCorrelationMap(pc, 'Cell type', a, 'Cell type', b, radiusOfInterest=50,
@@ -129,28 +136,32 @@ plt.figure(figsize=(25, 20))
 limit = int(np.ceil(np.max(np.abs([tcm.min(), tcm.max()]))))
 plt.imshow(tcm, cmap='RdBu_r', vmin=-limit, vmax=limit, origin='lower')
 plt.colorbar(label=gamma1_50)
-plt.title(section_name + ' TCM-A')
+if a != b:
+    plt.title(section_name + ' TCM-A')
+else:
+    plt.title(section_name + ' TCM')
 plt.xlabel(r'$\mu$m')
 plt.ylabel(r'$\mu$m')
 plt.gca().invert_yaxis()
 plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/TCM1_Plot_' + mouse_section_id.loc[id_index, 'Mouse_Sections']
-            + '_' + labs[0] + '_' + labs[labs.shape[0] - 1] + '.png', bbox_inches='tight')
+            + '_' + a + '_' + b + '.png', bbox_inches='tight')
 plt.show()
 
-tcm = topographicalCorrelationMap(pc, 'Cell type', b, 'Cell type', a, radiusOfInterest=50,
+if a != b:
+    tcm = topographicalCorrelationMap(pc, 'Cell type', b, 'Cell type', a, radiusOfInterest=50,
                                   maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50, visualiseStages=False)
 
-plt.figure(figsize=(25, 20))
-limit = int(np.ceil(np.max(np.abs([tcm.min(), tcm.max()]))))
-plt.imshow(tcm, cmap='RdBu_r', vmin=-limit, vmax=limit, origin='lower')
-plt.colorbar(label=gamma2_50)
-plt.title(section_name + ' TCM-B')
-plt.xlabel(r'$\mu$m')
-plt.ylabel(r'$\mu$m')
-plt.gca().invert_yaxis()
-plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/TCM2_Plot_' + mouse_section_id.loc[id_index, 'Mouse_Sections']
-            + '_' + labs[0] + '_' + labs[labs.shape[0] - 1] + '.png', bbox_inches='tight')
-plt.show()
+    plt.figure(figsize=(25, 20))
+    limit = int(np.ceil(np.max(np.abs([tcm.min(), tcm.max()]))))
+    plt.imshow(tcm, cmap='RdBu_r', vmin=-limit, vmax=limit, origin='lower')
+    plt.colorbar(label=gamma2_50)
+    plt.title(section_name + ' TCM-B')
+    plt.xlabel(r'$\mu$m')
+    plt.ylabel(r'$\mu$m')
+    plt.gca().invert_yaxis()
+    plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/TCM2_Plot_'
+                + mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + a + '_' + b + '.png', bbox_inches='tight')
+    plt.show()
 
 end = time.time()
 
