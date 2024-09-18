@@ -4,11 +4,9 @@
 
 # GitHub: https://github.com/JABull1066/ExtendedCorrelationFunctions
 
-import time
 
 from helperFunctions import *
 from imageProcessingFunctions import *
-import random
 
 start = time.time()
 
@@ -36,6 +34,12 @@ cancer_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_D
 cancer_data_um = cancer_data.mul(0.62)
 cancer_array = cancer_data_um.to_numpy()
 
+# import x and y locations of subset of cancer cells from CellProfiler .csv file,
+# already converted to um in cancerSubsetSelection.py
+cancer_subset_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Data_CancerCellsSubset.csv',
+                                 usecols=['Location_Center_X', 'Location_Center_Y'])
+cancer_subset_array = cancer_data_um.to_numpy()
+
 # import x and y locations of MDSCs from CellProfiler .csv file, convert from pixels to micrometers (0.62 um/px)
 mdsc_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Data_MDSC.csv',
                         usecols=['Location_Center_X', 'Location_Center_Y'])
@@ -47,41 +51,6 @@ t_cell_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_D
                           usecols=['Location_Center_X', 'Location_Center_Y'])
 t_cell_data_um = t_cell_data.mul(0.62)
 t_cell_array = t_cell_data_um.to_numpy()
-
-# %% randomly select subset of cancer data
-
-# import image size and convert to um
-image_sizes = pd.read_csv(full_section_name+'_Data_Image.csv', usecols=['Height_DAPI', 'Width_DAPI'])
-# image scale: .62 um/px
-height = image_sizes.loc[0, 'Height_DAPI']*0.62
-width = image_sizes.loc[0, 'Width_DAPI']*0.62
-
-# sort data into bins based on x and y coordinates
-grid = make_grid(width, height, 50)
-full_cancer = cancer_data_um.copy()
-full_cancer['X_Bin'] = pd.cut(x=full_cancer.loc[:, 'Location_Center_X'], bins=grid[0])
-full_cancer['Y_Bin'] = pd.cut(x=full_cancer.loc[:, 'Location_Center_Y'], bins=grid[1])
-full_cancer.to_csv('/Users/gillian/Desktop/UF/Thesis/Spreadsheets/PCF/'
-                   + mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Cancer_Grid.csv')
-
-# select a random 10% of cells in each bin
-cancer_subset = pd.DataFrame(columns=['Location_Center_X', 'Location_Center_Y', 'X_Bin', 'Y_Bin'])
-for name, group in full_cancer.groupby(['X_Bin', 'Y_Bin'], observed=False):
-    no_of_selected_cells = round(group.shape[0]/10)
-    i = 0
-    index_bank = []
-    group.reset_index(inplace=True, drop=True)
-    while i < no_of_selected_cells:
-        cell_index = round(random.uniform(0, group.shape[0]))
-        if cell_index == group.shape[0]:
-            cell_index = 0
-        if any(cell_index == element for element in index_bank):
-            continue
-        index_bank.append(cell_index)
-        cancer_subset.loc[len(cancer_subset)] = group.iloc[cell_index]
-        i += 1
-cancer_subset_data = cancer_subset[['Location_Center_X', 'Location_Center_Y']].copy()
-cancer_subset_array = cancer_subset_data.to_numpy()
 
 # %% format data for cross-PCF input
 
@@ -125,10 +94,21 @@ plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/Scatter_Plot_'
             + mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + labs[0] + '_' + labs[labs.shape[0] - 1]
             + '.png', bbox_inches='tight')
 if labs[labs.shape[0] - 1] == 'Cancer Cells Subset':
+    # import image size and convert to um, image scale: .62 um/px
+    image_sizes = pd.read_csv(full_section_name + '_Data_Image.csv', usecols=['Height_DAPI', 'Width_DAPI'])
+    height = image_sizes.loc[0, 'Height_DAPI'] * 0.62
+    width = image_sizes.loc[0, 'Width_DAPI'] * 0.62
+
+    # sort data into bins based on x and y coordinates
+    grid = make_grid(width, height, 50)
+    cancer_data_um['X_Bin'] = pd.cut(x=cancer_data_um.loc[:, 'Location_Center_X'], bins=grid[0])
+    cancer_data_um['Y_Bin'] = pd.cut(x=cancer_data_um.loc[:, 'Location_Center_Y'], bins=grid[1])
+
+    # continue updating plot
+    plt.title(section_name + ' with 50 ' + r'$\mu$m grid')
     # plot grid sort of cancer cells
     x = cancer_data_um.loc[:, 'Location_Center_X']
     y = cancer_data_um.loc[:, 'Location_Center_Y']
-    plt.title(section_name + ' with 50 ' + r'$\mu$m grid')
     for i in grid[0]:
         plt.vlines(x=i, ymin=0, ymax=height, color='red', alpha=0.5, linewidth=1)
     for j in grid[1]:
