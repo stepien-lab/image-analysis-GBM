@@ -79,10 +79,10 @@ labs_mdsc_mdsc = np.concatenate((['MDSCs'] * mdsc_array.shape[0], ['MDSCs'] * md
 # choose one comparison to run
 array = cancer_cancer
 labs = labs_cancer_cancer
-gamma1_r = r'$g_{C}(r)$'
-gamma2_r = r'$g_{C}(r)$'
-gamma1_50 = r'$g_{C}(r=50)$'
-gamma2_50 = r'$g_{C}(r=50)$'
+gamma1_r = r'$g_{Cc}(r)$'
+gamma2_r = r'$g_{cC}(r)$'
+gamma1_50 = r'$g_{Cc}(r=50)$'
+gamma2_50 = r'$g_{cC}(r=50)$'
 
 # %% plot cell types
 pc = generatePointCloud("Points", array)
