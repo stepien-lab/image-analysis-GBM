@@ -38,7 +38,7 @@ cancer_array = cancer_data_um.to_numpy()
 # already converted to um in cancerSubsetSelection.py
 cancer_subset_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Data_CancerCellsSubset.csv',
                                  usecols=['Location_Center_X', 'Location_Center_Y'])
-cancer_subset_array = cancer_data_um.to_numpy()
+cancer_subset_array = cancer_subset_data.to_numpy()
 
 # import x and y locations of MDSCs from CellProfiler .csv file, convert from pixels to micrometers (0.62 um/px)
 mdsc_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Data_MDSC.csv',
@@ -51,6 +51,11 @@ t_cell_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_D
                           usecols=['Location_Center_X', 'Location_Center_Y'])
 t_cell_data_um = t_cell_data.mul(0.62)
 t_cell_array = t_cell_data_um.to_numpy()
+
+print('Cancer cells: ' + str(cancer_data_um.shape[0]))
+print('Cancer cells subset: ' + str(cancer_subset_data.shape[0]))
+print('MDSCs: ' + str(mdsc_data_um.shape[0]))
+print('T-cells: ' + str(t_cell_data_um.shape[0]))
 
 # %% format data for cross-PCF input
 
