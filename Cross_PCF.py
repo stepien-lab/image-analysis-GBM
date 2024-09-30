@@ -16,7 +16,7 @@ sns.set_theme(style='ticks', font_scale=5)
 mouse_section_id = pd.read_csv('mouse_sections.csv')
 
 # choose image set for analysis
-id_index = 1
+id_index = 15
 
 # format labels for plots
 full_section_name = mouse_section_id.loc[id_index, 'Mouse_Sections']
@@ -35,7 +35,7 @@ cancer_data_um = cancer_data.mul(0.62)
 cancer_array = cancer_data_um.to_numpy()
 
 # import x and y locations of subset of cancer cells from CellProfiler .csv file,
-# already converted to um in cancerSubsetSelection.py
+# already converted to um in subsetSelection.py
 cancer_subset_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Data_CancerCellsSubset.csv',
                                  usecols=['Location_Center_X', 'Location_Center_Y'])
 cancer_subset_array = cancer_subset_data.to_numpy()
@@ -52,10 +52,17 @@ t_cell_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_D
 t_cell_data_um = t_cell_data.mul(0.62)
 t_cell_array = t_cell_data_um.to_numpy()
 
+# import x and y locations of subset of t cells from CellProfiler .csv file,
+# already converted to um in subsetSelection.py
+t_cell_subset_data = pd.read_csv(mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_Data_TCellsSubset.csv',
+                                 usecols=['Location_Center_X', 'Location_Center_Y'])
+t_cell_subset_array = t_cell_subset_data.to_numpy()
+
 print('Cancer cells: ' + str(cancer_data_um.shape[0]))
 print('Cancer cells subset: ' + str(cancer_subset_data.shape[0]))
 print('MDSCs: ' + str(mdsc_data_um.shape[0]))
 print('T-cells: ' + str(t_cell_data_um.shape[0]))
+# print('T-cells subset: ' + str(t_cell_subset_data.shape[0]))
 
 # %% format data for cross-PCF input
 
@@ -77,12 +84,12 @@ labs_t_cell_t_cell = np.concatenate((['T-cells'] * t_cell_array.shape[0], ['T-ce
 labs_mdsc_mdsc = np.concatenate((['MDSCs'] * mdsc_array.shape[0], ['MDSCs'] * mdsc_array.shape[0]))
 
 # choose one comparison to run
-array = cancer_cancer
-labs = labs_cancer_cancer
-gamma1_r = r'$g_{Cc}(r)$'
-gamma2_r = r'$g_{cC}(r)$'
-gamma1_50 = r'$g_{Cc}(r=50)$'
-gamma2_50 = r'$g_{cC}(r=50)$'
+array = mdsc_mdsc
+labs = labs_mdsc_mdsc
+gamma1_r = r'$g_{M}(r)$'
+gamma2_r = r'$g_{M}(r)$'
+gamma1_50 = r'$g_{M}(r=50)$'
+gamma2_50 = r'$g_{M}(r=50)$'
 
 # %% plot cell types
 pc = generatePointCloud("Points", array)
@@ -98,7 +105,7 @@ plt.ylabel(r'$\mu$m')
 plt.savefig('/Users/gillian/Desktop/UF/Thesis/Plots/PCF/Scatter_Plot_'
             + mouse_section_id.loc[id_index, 'Mouse_Sections'] + '_' + labs[0] + '_' + labs[labs.shape[0] - 1]
             + '.png', bbox_inches='tight')
-if labs[labs.shape[0] - 1] == 'Cancer Cells Subset':
+if labs[labs.shape[0] - 1] == 'Cancer Cells Subset' or labs[labs.shape[0] - 1] == 'T-cells Subset':
     # import image size and convert to um, image scale: .62 um/px
     image_sizes = pd.read_csv(full_section_name + '_Data_Image.csv', usecols=['Height_DAPI', 'Width_DAPI'])
     height = image_sizes.loc[0, 'Height_DAPI'] * 0.62
@@ -184,7 +191,8 @@ plt.show()
 
 if a != b:
     tcm = topographicalCorrelationMap(pc, 'Cell type', b, 'Cell type', a, radiusOfInterest=50,
-                                  maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50, visualiseStages=False)
+                                      maxCorrelationThreshold=5.0, kernelRadius=150, kernelSigma=50,
+                                      visualiseStages=False)
 
     plt.figure(figsize=(25, 20))
     limit = int(np.ceil(np.max(np.abs([tcm.min(), tcm.max()]))))
@@ -200,4 +208,4 @@ if a != b:
 
 end = time.time()
 
-print('Execution time: ' + str((end - start)/60) + ' min')
+print('Execution time: ' + str((end - start) / 60) + ' min')
