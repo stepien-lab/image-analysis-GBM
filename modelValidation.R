@@ -1,0 +1,5 @@
+CM <- read.csv("~/Desktop/UF/Thesis/Codes/image-analysis-GBM/CM.csv")
+lmod <- lm(r.0~., data=CM)
+plot(lmod)
+summary(lmod)
+cor(CM)
