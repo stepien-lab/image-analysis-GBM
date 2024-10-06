@@ -64,6 +64,9 @@ print('MDSCs: ' + str(mdsc_data_um.shape[0]))
 print('T-cells: ' + str(t_cell_data_um.shape[0]))
 # print('T-cells subset: ' + str(t_cell_subset_data.shape[0]))
 
+# avoid overwriting PCF data
+exit()
+
 # %% format data for cross-PCF input
 
 # combine cell types into one array for later use in cross-PCFs
