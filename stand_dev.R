@@ -1,0 +1,70 @@
+library(ggplot2)
+
+CM <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/CM.csv")
+CM <- subset(CM, select=-X)
+CM <- transform(CM, row_mean=rowMeans(CM, na.rm = TRUE))
+CM <- transform(CM, row_stdev=apply(CM, 1, sd, na.rm=TRUE))
+CM_mean <- mean(CM$row_stdev)
+
+CT <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/CT.csv")
+CT <- subset(CT, select=-X)
+CT <- transform(CT, row_mean=rowMeans(CT, na.rm = TRUE))
+CT <- transform(CT, row_stdev=apply(CT, 1, sd, na.rm=TRUE))
+CT_mean <- mean(CT$row_stdev)
+
+MC <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/MC.csv")
+MC <- subset(MC, select=-X)
+MC <- transform(MC, row_mean=rowMeans(MC, na.rm = TRUE))
+MC <- transform(MC, row_stdev=apply(MC, 1, sd, na.rm=TRUE))
+MC_mean <- mean(MC$row_stdev)
+
+MT <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/MT.csv")
+MT <- subset(MT, select=-X)
+MT <- transform(MT, row_mean=rowMeans(MT, na.rm = TRUE))
+MT <- transform(MT, row_stdev=apply(MT, 1, sd, na.rm=TRUE))
+MT_mean <- mean(MT$row_stdev)
+
+TC <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/TC.csv")
+TC <- subset(TC, select=-X)
+TC <- transform(TC, row_mean=rowMeans(TC, na.rm = TRUE))
+TC <- transform(TC, row_stdev=apply(TC, 1, sd, na.rm=TRUE))
+TC_mean <- mean(TC$row_stdev)
+
+TM <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/TM.csv")
+TM <- subset(TM, select=-X)
+TM <- transform(TM, row_mean=rowMeans(TM, na.rm = TRUE))
+TM <- transform(TM, row_stdev=apply(TM, 1, sd, na.rm=TRUE))
+TM_mean <- mean(TM$row_stdev)
+
+C <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/C.csv")
+C <- subset(C, select=-X)
+C <- transform(C, row_mean=rowMeans(C, na.rm = TRUE))
+C <- transform(C, row_stdev=apply(C, 1, sd, na.rm=TRUE))
+C_mean <- mean(C$row_stdev)
+
+M <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/M.csv")
+M <- subset(M, select=-X)
+M <- transform(M, row_mean=rowMeans(M, na.rm = TRUE))
+M <- transform(M, row_stdev=apply(M, 1, sd, na.rm=TRUE))
+M_mean <- mean(M$row_stdev)
+
+TT <- read.csv("/Users/gillian/Desktop/UF/Thesis/Codes/image-analysis-GBM/T.csv")
+TT <- subset(TT, select=-X)
+TT <- transform(TT, row_mean=rowMeans(TT, na.rm = TRUE))
+TT <- transform(TT, row_stdev=apply(TT, 1, sd, na.rm=TRUE))
+T_mean <- mean(TT$row_stdev)
+
+stdev <- data.frame(CM$row_stdev, CT$row_stdev, MC$row_stdev, MT$row_stdev, TC$row_stdev, TM$row_stdev, C$row_stdev, M$row_stdev, TT$row_stdev)
+
+stdev_plot <- ggplot(data=stdev, aes(x=0:250)) + labs(x = "radius", y = "standard deviation", color = "comparisons") + ggtitle("Variation of PCF/cross-PCF comparisons for long-term data")
+stdev_plot <- stdev_plot + geom_line(aes(y = CM.row_stdev, color = "CM"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = CT.row_stdev, color="CT"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = MC.row_stdev, color="MC"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = MT.row_stdev, color="MT"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = TC.row_stdev, color="TC"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = TM.row_stdev, color="TM"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = C.row_stdev, color="C"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = M.row_stdev, color="M"), linewidth=0.5)
+stdev_plot <- stdev_plot + geom_line(aes(y = TT.row_stdev, color="T"), linewidth=0.5)
+stdev_plot
+
