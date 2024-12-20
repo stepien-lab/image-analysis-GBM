@@ -7,7 +7,7 @@ csv_files = glob.glob(os.path.join('/Users/gillian/Desktop/UF/Thesis/Spreadsheet
 
 df_list = []
 for file in csv_files:
-    if '2332_3' in file:
+    if not('2332_3' in file):
         df = pd.read_csv(file)
         df_list.append(df)
 
