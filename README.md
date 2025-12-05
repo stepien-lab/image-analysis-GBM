@@ -8,6 +8,17 @@ The code contained in the image-analysis-GBM project was developed for image ana
 ### CellProfiler
 [CellProcessing.cpproj](CellProcessing.cpproj) is developed for image analysis with [CellProfiler](https://cellprofiler.org).
 
+**Inputs:**
++ Images with fluorescent labels marking CD3+ (white), CCR2+ (red), and CX3CR1+ (green) cells.
+  + Viable cells are denoted by the blue fluorescent label
+  + T cells are identified as CD3+ cells (blue and white)
+  + MDSCs are identified as CCR2+ and CXC3R1+ (blue, red, and green)
+  + Cancer cells are identified as viable cells that are not T cells or MDSCs (blue, but not white, red, or green).
+
+**Outputs:**
++ `.csv` files in a `Data` folder with the spatial (x,y) location of each T cell, MDSC, and cancer cell
++ `.tiff` files in a `ProcessedImages` folder illustrating which cells are identified from each fluorescent marker
+
 ### Python
 The remaining code is developed in Python for analyzing output from CellProfiler.
 
