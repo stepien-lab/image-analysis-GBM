@@ -17,4 +17,4 @@ It is based on code available from [https://github.com/JABull1066/ExtendedCorrel
 The lead developer of this code is [Gillian Carr](https://github.com/gilliancarr).
 
 ## Licensing
-Copyright 2023-2024 [Tracy Stepien's Research Lab Group](https://github.com/stepien-lab/). This is free software made available under the MIT License. For details see the [LICENSE](LICENSE) file.
+Copyright 2023-2025 [Tracy Stepien's Research Lab Group](https://github.com/stepien-lab/). This is free software made available under the MIT License. For details see the [LICENSE](LICENSE) file.
